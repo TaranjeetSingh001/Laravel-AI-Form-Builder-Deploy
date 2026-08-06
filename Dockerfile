@@ -1,5 +1,6 @@
-FROM php:8.4-apache
+FROM php:8.3-apache
 
+# Install system packages
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -11,36 +12,50 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    nodejs \
-    npm \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql zip
+# Install Node.js 22
+COPY --from=node:22 /usr/local/bin /usr/local/bin
+COPY --from=node:22 /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
-RUN a2enmod rewrite
-
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        gd \
+        pdo \
+        pdo_mysql \
+        zip
+
+# Enable Apache rewrite
+RUN a2enmod rewrite
+
+# Application directory
 WORKDIR /var/www/html
 
+# Copy application
 COPY . .
 
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+# Build frontend
 RUN npm install
 RUN npm run build
 
+# Apache document root
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-    /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
-    /etc/apache2/apache2.conf \
-    /etc/apache2/conf-available/*.conf
-
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Laravel permissions
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 80
 
