@@ -21,7 +21,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql zip
 
 # Enable Apache rewrite
-RUN a2enmod rewrite
+RUN a2dismod mpm_event \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
