@@ -1,3 +1,29 @@
+<p>Commands to run the project
+
+npm install
+
+composer install
+
+check php version
+php -v
+
+php artisan serve
+
+important commands to run below
+
+php artisan optimize:clear
+
+composer dump-autoload</p>
+
+
+<p>Use PHP 8.4 and Laravel latest version
+Steps:
+    In C Drive out PHP 8.4 version folder simply
+    Just Extract the code folder in your local 
+    And upload the db attached in google drive - https://drive.google.com/drive/folders/1_MuaOO_awrcKS4HiRIRdRr2XrrJBvYMD?usp=drive_link to upload the db 
+    and then simply run the commands given above to run the project
+</p>
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
