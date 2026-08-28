@@ -1,3 +1,4 @@
+<a href="http://taran-laravel-app.cu.ma/">MY LARAVEL AI FORM</a>
 <p>Commands to run the project
 
 npm install
