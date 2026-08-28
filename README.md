@@ -1,4 +1,8 @@
 <a href="http://taran-laravel-app.cu.ma/">MY LARAVEL AI FORM</a>
+
+Credentials To Login
+ID - taran42000@gmail.com
+Pass - testing123
 <p>Commands to run the project
 
 npm install
